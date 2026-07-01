@@ -148,7 +148,7 @@ All routes are versioned under `/api/v1/` unless noted.
 | `/help` | Help message |
 | `/cancel` | Cancel the current conversation |
 
-Send a bill (photo, PDF, or text) at any time to start the upload flow.
+Send a bill (photo, PDF, or text) at any time to start the upload flow.s
 
 ## Architecture decision: deferred DVA
 

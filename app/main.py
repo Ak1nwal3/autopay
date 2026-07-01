@@ -11,6 +11,7 @@ from app import models  # noqa: F401
 from app.api import auth_router, bills_router, kyc_router, wallet_router, webhooks_router
 from app.api.health import router as health_router
 from app.core.config import settings
+from app.core.database import init_db
 from app.core.logging import setup_logging
 from app.core.scheduler import start_scheduler, stop_scheduler
 from app.services.telegram import (
@@ -23,6 +24,7 @@ from app.services.telegram import (
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_logging()
+    init_db()
     # Background workers (single process by design — see Dockerfile).
     # Order matters: scheduler first so a job that fires on startup
     # doesn't race with bot startup; bot second so a Telegram update
