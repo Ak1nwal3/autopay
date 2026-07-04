@@ -52,7 +52,7 @@ async def signup(
     session: Session = Depends(get_session),
     provider: PaymentProvider = Depends(get_payment_provider),
 ) -> TokenResponse:
-    """Create a user, issue tokens. DVA provisioning is best-effort
+    """Create a user, issue tokens. VA provisioning is best-effort
     and gated by `settings.auto_provision_dva_on_signup`:
 
       * `True`  → signup calls the payment provider synchronously and

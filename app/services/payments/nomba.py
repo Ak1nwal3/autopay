@@ -55,7 +55,7 @@ from app.services.payments.exceptions import (
 
 logger = logging.getLogger(__name__)
 
-NOMBA_BASE = "https://api.nomba.com"
+NOMBA_BASE = "https://sandbox.nomba.com"
 TOKEN_REFRESH_BUFFER = timedelta(minutes=5)
 ACCESS_TOKEN_DEFAULT_TTL = timedelta(minutes=30)
 
@@ -182,9 +182,12 @@ class NombaProvider(PaymentProvider):
                 raw=body,
             )
 
-        self._access_token = body["access_token"]
-        self._refresh_token = body.get("refresh_token")
-        self._token_expires_at = self._parse_expiry(body.get("expiresAt"))
+        # Token payload is nested under `data`, same envelope as every
+        # other Nomba response -- {code, description, data: {...}}.
+        data = body.get("data") or {}
+        self._access_token = data["access_token"]
+        self._refresh_token = data.get("refresh_token")
+        self._token_expires_at = self._parse_expiry(data.get("expiresAt"))
 
     async def _refresh_token_call(self) -> None:
         if not self._refresh_token:
@@ -214,9 +217,10 @@ class NombaProvider(PaymentProvider):
             await self._issue_token()
             return
 
-        self._access_token = body["access_token"]
-        self._refresh_token = body.get("refresh_token", self._refresh_token)
-        self._token_expires_at = self._parse_expiry(body.get("expiresAt"))
+        data = body.get("data") or {}
+        self._access_token = data["access_token"]
+        self._refresh_token = data.get("refresh_token", self._refresh_token)
+        self._token_expires_at = self._parse_expiry(data.get("expiresAt"))
 
     async def _ensure_token(self) -> str:
         if self._token_is_fresh():

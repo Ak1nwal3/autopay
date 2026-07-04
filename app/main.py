@@ -21,6 +21,12 @@ from app.services.telegram import (
 )
 
 
+from app.middleware.timer import timing_middleware
+
+
+
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_logging()
@@ -44,6 +50,8 @@ app = FastAPI(
     description="AI-powered bill automation for Nigerian users.",
     lifespan=lifespan,
 )
+
+app.middleware("http")(timing_middleware)
 
 # Health (unversioned — used by Docker, k8s, load balancers)
 app.include_router(health_router)
