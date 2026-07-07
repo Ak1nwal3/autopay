@@ -48,9 +48,6 @@ pg_data/
 # Migrations output (keep versions/ tracked but ignore compiled)
 *.pyc
 
-
-app/core/config.py
-
 uvi.err
 test.ipynb
 graphify-out/cache
