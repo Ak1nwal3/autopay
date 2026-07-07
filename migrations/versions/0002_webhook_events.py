@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from typing import Sequence, Union
 
-import sqlalchemy as sa
 from alembic import op
 
 revision: str = "0002_webhook_events"
@@ -18,29 +17,27 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.create_table(
-        "webhook_events",
-        sa.Column("id", sa.BigInteger(), primary_key=True, autoincrement=True),
-        sa.Column("provider", sa.Text(), nullable=False),
-        sa.Column("event_id", sa.Text(), nullable=False),
-        sa.Column("event_type", sa.Text(), nullable=False),
-        sa.Column(
-            "received_at",
-            sa.TIMESTAMP(),
-            nullable=False,
-            server_default=sa.text("NOW()"),
-        ),
-        sa.UniqueConstraint(
-            "provider", "event_id", name="uq_webhook_events_provider_event_id"
-        ),
+    # IF NOT EXISTS guards: local dev DBs may already have this table via
+    # schema.sql's docker-entrypoint-initdb.d load (see 0001_baseline).
+    op.execute(
+        """
+        CREATE TABLE IF NOT EXISTS webhook_events (
+            id           BIGSERIAL    PRIMARY KEY,
+            provider     TEXT         NOT NULL,
+            event_id     TEXT         NOT NULL,
+            event_type   TEXT         NOT NULL,
+            received_at  TIMESTAMP    NOT NULL DEFAULT NOW(),
+            CONSTRAINT uq_webhook_events_provider_event_id
+                UNIQUE (provider, event_id)
+        )
+        """
     )
-    op.create_index(
-        "idx_webhook_events_received_at",
-        "webhook_events",
-        ["received_at"],
+    op.execute(
+        "CREATE INDEX IF NOT EXISTS idx_webhook_events_received_at "
+        "ON webhook_events(received_at)"
     )
 
 
 def downgrade() -> None:
-    op.drop_index("idx_webhook_events_received_at", table_name="webhook_events")
-    op.drop_table("webhook_events")
+    op.execute("DROP INDEX IF EXISTS idx_webhook_events_received_at")
+    op.execute("DROP TABLE IF EXISTS webhook_events")

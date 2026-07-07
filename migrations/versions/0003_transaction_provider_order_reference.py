@@ -24,7 +24,6 @@ from __future__ import annotations
 
 from typing import Sequence, Union
 
-import sqlalchemy as sa
 from alembic import op
 
 revision: str = "0003_transaction_provider_order_reference"
@@ -34,19 +33,20 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column(
-        "transactions",
-        sa.Column("provider_order_reference", sa.String(length=128), nullable=True),
+    # IF NOT EXISTS guards: local dev DBs may already have this column via
+    # schema.sql's docker-entrypoint-initdb.d load (see 0001_baseline).
+    op.execute(
+        "ALTER TABLE transactions "
+        "ADD COLUMN IF NOT EXISTS provider_order_reference VARCHAR(128)"
     )
-    op.create_index(
-        "ix_transactions_provider_order_reference",
-        "transactions",
-        ["provider_order_reference"],
+    op.execute(
+        "CREATE INDEX IF NOT EXISTS ix_transactions_provider_order_reference "
+        "ON transactions(provider_order_reference)"
     )
 
 
 def downgrade() -> None:
-    op.drop_index(
-        "ix_transactions_provider_order_reference", table_name="transactions"
+    op.execute("DROP INDEX IF EXISTS ix_transactions_provider_order_reference")
+    op.execute(
+        "ALTER TABLE transactions DROP COLUMN IF EXISTS provider_order_reference"
     )
-    op.drop_column("transactions", "provider_order_reference")
