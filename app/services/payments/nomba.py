@@ -115,11 +115,11 @@ class NombaProvider(PaymentProvider):
         account_id: str,
         webhook_secret: str,
         timeout: float = 30.0,
-        is_sandbox: bool = settings.nomba_sandbox,
+        # is_sandbox: bool = settings.nomba_sandbox,
     ) -> None:
         self._base_url = base_url.rstrip("/")
         self._webhook_secret = webhook_secret
-        self._is_sandbox = is_sandbox
+        # self._is_sandbox = is_sandbox
         self._oauth = OAuth2ClientCredentials(
             token_url=f"{self._base_url}/v1/auth/token/issue",
             client_id=client_id,

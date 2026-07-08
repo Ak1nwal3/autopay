@@ -14,6 +14,7 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
+       
     )
 
     # ── App ──────────────────────────────────────────────────────────
@@ -31,6 +32,7 @@ class Settings(BaseSettings):
     database_pool_size: int = 10
     database_max_overflow: int = 20
     database_echo: bool = False
+    allowed_origins: str = "https://autopay-2.onrender.com"
 
     # ── Payment provider ─────────────────────────────────────────────
     payment_provider: Literal["nomba"] = "nomba"
