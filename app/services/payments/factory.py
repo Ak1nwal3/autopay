@@ -24,5 +24,5 @@ def get_payment_provider() -> PaymentProvider:
         client_secret=s.nomba_client_secret,
         account_id=s.nomba_account_id,
         webhook_secret=s.nomba_webhook_secret,
-        is_sandbox=s.nomba_sandbox,
+        # is_sandbox=s.nomba_sandbox,
     )
