@@ -66,7 +66,7 @@ class Settings(BaseSettings):
     jwt_refresh_ttl_days: int = 7
 
     # ── Feature flags ────────────────────────────────────────────────
-    auto_provision_dva_on_signup: bool = False
+    auto_provision_dva_on_signup: bool = True
 
     # ── Derived ──────────────────────────────────────────────────────
     @computed_field  # type: ignore[prop-decorator]
