@@ -53,7 +53,7 @@ class Settings(BaseSettings):
     groq_api_key: str = ""
     google_api_key: str = ""
     langchain_api_key: str = ""
-    langchain_tracing_v2: bool = False
+    langchain_tracing_v2: bool = True
 
     # ── Fees ─────────────────────────────────────────────────────────
     payout_fee_ngn: Decimal = Decimal("50.00")
